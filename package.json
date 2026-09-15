@@ -1,0 +1,23 @@
+{
+  "name": "stellar-trust",
+  "private": true,
+  "version": "0.1.0",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "concurrently -n web,api -c cyan,magenta \"npm --workspace apps/web run dev\" \"npm --workspace apps/api run dev\"",
+    "build": "npm --workspace apps/web run build && npm --workspace apps/api run build && npm --workspace packages/stellar run build && npm --workspace packages/validation run build && npm --workspace packages/types run build && npm --workspace packages/database run build",
+    "test": "vitest run",
+    "lint": "npm --workspace apps/web run lint"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "concurrently": "^9.1.2",
+    "playwright": "^1.63.0",
+    "tsx": "^4.19.1",
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.8"
+  }
+}

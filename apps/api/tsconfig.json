@@ -1,0 +1,18 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "dist",
+    "rootDir": "../..",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "target": "ES2022",
+    "noEmit": false,
+    "types": ["node"],
+    "baseUrl": ".",
+    "paths": {
+      "@stellar-trust/stellar": ["../../packages/stellar/src/index.ts"],
+      "@stellar-trust/validation": ["../../packages/validation/src/index.ts"]
+    }
+  },
+  "include": ["src/**/*", "../../packages/**/*.ts"]
+}
