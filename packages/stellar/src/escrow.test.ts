@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { Keypair, nativeToScVal, xdr } from "@stellar/stellar-sdk";
-import { EscrowClient, decodeMilestones, isValidContractId } from "./escrow";
+import { EscrowClient, availableActions, decodeMilestones, isValidContractId } from "./escrow";
 
 const CONTRACT_ID = "CBCI6QFRQHUVZDMLF5NLY4U56PEXHZ7KYCEWTXXJ6XZMGHCY5PG4WZM4";
 
@@ -34,5 +34,31 @@ describe("EscrowClient", () => {
     ]);
     const decoded = decodeMilestones(xdr.ScVal.scvVec([milestone]));
     expect(decoded).toEqual([{ amount: 300n, deadline: 2000n, status: "Submitted" }]);
+  });
+});
+
+describe("availableActions", () => {
+  const m = (status: "Pending" | "Submitted" | "Released" | "Refunded") => ({
+    amount: 1n,
+    deadline: 1000n,
+    status,
+  });
+
+  it("allows submit/release before the deadline for pending work", () => {
+    expect(availableActions(m("Pending"), 500)).toEqual(["submit", "release"]);
+  });
+
+  it("allows refund of undelivered work only after the deadline", () => {
+    expect(availableActions(m("Pending"), 1001)).toEqual(["submit", "release", "refund"]);
+  });
+
+  it("allows claim of submitted work only after the deadline, never refund", () => {
+    expect(availableActions(m("Submitted"), 500)).toEqual(["release"]);
+    expect(availableActions(m("Submitted"), 1001)).toEqual(["release", "claim"]);
+  });
+
+  it("allows nothing once settled", () => {
+    expect(availableActions(m("Released"), 5000)).toEqual([]);
+    expect(availableActions(m("Refunded"), 5000)).toEqual([]);
   });
 });

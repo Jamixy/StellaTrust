@@ -115,3 +115,20 @@ export function isValidContractId(id: string): boolean {
     return false;
   }
 }
+
+/**
+ * Which actions the contract will accept for a milestone right now, mirroring
+ * the checks in contracts/escrow. Role (client vs freelancer) is not checked
+ * here; the contract enforces it via require_auth.
+ */
+export function availableActions(milestone: EscrowMilestone, nowSeconds: number): EscrowAction[] {
+  const pastDeadline = BigInt(Math.floor(nowSeconds)) > milestone.deadline;
+  switch (milestone.status) {
+    case "Pending":
+      return pastDeadline ? ["submit", "release", "refund"] : ["submit", "release"];
+    case "Submitted":
+      return pastDeadline ? ["release", "claim"] : ["release"];
+    default:
+      return [];
+  }
+}
