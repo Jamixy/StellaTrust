@@ -156,6 +156,12 @@ stellar-trust/
 
 ![Project creation](docs/screenshots/projects-new.png)
 
+### Live on-chain escrow
+
+Milestones read from the deployed Soroban contract on Testnet, with Freighter signing. Milestone 1 has been released; milestone 2 is submitted.
+
+![Live escrow page](docs/screenshots/escrow-live.png)
+
 ## Local Development
 
 ```bash
