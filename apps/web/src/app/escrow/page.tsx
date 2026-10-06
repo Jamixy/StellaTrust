@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { requestAccess, signTransaction } from "@stellar/freighter-api";
 import { Networks } from "@stellar/stellar-sdk";
-import { EscrowAction, EscrowClient, EscrowMilestone } from "@stellar-trust/escrow";
+import { EscrowAction, EscrowClient, EscrowMilestone, availableActions } from "@stellar-trust/escrow";
 import { AppShell, SectionHeading, StatusPill } from "@/components/app-shell";
 
 const CONTRACT_ID =
@@ -100,7 +100,7 @@ export default function EscrowPage() {
                         key={a.action}
                         type="button"
                         title={a.hint}
-                        disabled={busy || m.status === "Released" || m.status === "Refunded"}
+                        disabled={busy || !availableActions(m, Date.now() / 1000).includes(a.action)}
                         onClick={() => act(a.action, i)}
                         className="rounded-lg border border-slate-300 px-3 py-1.5 text-sm disabled:opacity-40"
                       >
