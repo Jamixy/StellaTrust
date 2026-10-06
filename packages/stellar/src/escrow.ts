@@ -20,6 +20,12 @@ export interface EscrowMilestone {
   status: MilestoneStatus;
 }
 
+export interface EscrowInfo {
+  client: string;
+  freelancer: string;
+  token: string;
+}
+
 export type EscrowAction = "submit" | "release" | "claim" | "refund";
 
 export interface EscrowClientConfig {
@@ -72,6 +78,26 @@ export class EscrowClient {
       throw new Error("Could not read escrow milestones from the contract.");
     }
     return decodeMilestones(sim.result.retval);
+  }
+
+  /**
+   * Read the client, freelancer and token. Returns null when the contract has
+   * no `info` function (older deployments) or is not initialized.
+   */
+  async getInfo(sourcePublicKey: string): Promise<EscrowInfo | null> {
+    try {
+      const account = await this.server.getAccount(sourcePublicKey);
+      const sim = await this.server.simulateTransaction(
+        new TransactionBuilder(account, { fee: "100", networkPassphrase: this.networkPassphrase })
+          .addOperation(this.contract.call("info"))
+          .setTimeout(30)
+          .build(),
+      );
+      if (!rpc.Api.isSimulationSuccess(sim) || !sim.result) return null;
+      return decodeInfo(sim.result.retval);
+    } catch {
+      return null;
+    }
   }
 
   /** Prepare a milestone action for the connected wallet to sign. */
@@ -131,4 +157,24 @@ export function availableActions(milestone: EscrowMilestone, nowSeconds: number)
     default:
       return [];
   }
+}
+
+export function decodeInfo(value: xdr.ScVal): EscrowInfo {
+  const native = scValToNative(value) as { client: string; freelancer: string; token: string };
+  return { client: native.client, freelancer: native.freelancer, token: native.token };
+}
+
+const CLIENT_ACTIONS: EscrowAction[] = ["release", "refund"];
+const FREELANCER_ACTIONS: EscrowAction[] = ["submit", "claim"];
+
+/** Restrict actions to those the connected account may call. Unknown role: no restriction. */
+export function actionsForAccount(
+  actions: EscrowAction[],
+  account: string | null,
+  info: EscrowInfo | null,
+): EscrowAction[] {
+  if (!account || !info) return actions;
+  if (account === info.client) return actions.filter((a) => CLIENT_ACTIONS.includes(a));
+  if (account === info.freelancer) return actions.filter((a) => FREELANCER_ACTIONS.includes(a));
+  return [];
 }

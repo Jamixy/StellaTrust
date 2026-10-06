@@ -121,3 +121,20 @@ fn cannot_initialize_twice() {
     );
     assert_eq!(r, Err(Ok(Error::AlreadyInitialized)));
 }
+
+#[test]
+fn info_returns_parties_and_token() {
+    let c = setup();
+    let info = c.escrow.info();
+    assert_eq!(info.client, c.client);
+    assert_eq!(info.freelancer, c.freelancer);
+    assert_eq!(info.token, c.token.address);
+}
+
+#[test]
+fn info_fails_before_init() {
+    let env = Env::default();
+    let id = env.register(Escrow, ());
+    let escrow = EscrowClient::new(&env, &id);
+    assert_eq!(escrow.try_info(), Err(Ok(Error::NotInitialized)));
+}

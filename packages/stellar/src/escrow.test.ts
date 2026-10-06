@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { Keypair, nativeToScVal, xdr } from "@stellar/stellar-sdk";
-import { EscrowClient, availableActions, decodeMilestones, isValidContractId } from "./escrow";
+import { Address, Keypair, nativeToScVal, xdr } from "@stellar/stellar-sdk";
+import { EscrowClient, actionsForAccount, availableActions, decodeInfo, decodeMilestones, isValidContractId } from "./escrow";
 
 const CONTRACT_ID = "CBCI6QFRQHUVZDMLF5NLY4U56PEXHZ7KYCEWTXXJ6XZMGHCY5PG4WZM4";
 
@@ -60,5 +60,40 @@ describe("availableActions", () => {
   it("allows nothing once settled", () => {
     expect(availableActions(m("Released"), 5000)).toEqual([]);
     expect(availableActions(m("Refunded"), 5000)).toEqual([]);
+  });
+});
+
+describe("roles", () => {
+  const client = Keypair.random().publicKey();
+  const freelancer = Keypair.random().publicKey();
+  const info = { client, freelancer, token: CONTRACT_ID };
+  const all = ["submit", "release", "claim", "refund"] as const;
+
+  it("limits the client to release and refund", () => {
+    expect(actionsForAccount([...all], client, info)).toEqual(["release", "refund"]);
+  });
+
+  it("limits the freelancer to submit and claim", () => {
+    expect(actionsForAccount([...all], freelancer, info)).toEqual(["submit", "claim"]);
+  });
+
+  it("allows nothing for an unrelated account", () => {
+    expect(actionsForAccount([...all], Keypair.random().publicKey(), info)).toEqual([]);
+  });
+
+  it("does not restrict when roles are unknown", () => {
+    expect(actionsForAccount([...all], client, null)).toEqual([...all]);
+    expect(actionsForAccount([...all], null, info)).toEqual([...all]);
+  });
+
+  it("decodes the contract's info struct", () => {
+    const entry = (k: string, v: string) =>
+      new xdr.ScMapEntry({ key: xdr.ScVal.scvSymbol(k), val: new Address(v).toScVal() });
+    const scv = xdr.ScVal.scvMap([
+      entry("client", client),
+      entry("freelancer", freelancer),
+      entry("token", CONTRACT_ID),
+    ]);
+    expect(decodeInfo(scv)).toEqual(info);
   });
 });

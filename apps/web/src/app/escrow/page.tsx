@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { requestAccess, signTransaction } from "@stellar/freighter-api";
 import { Networks } from "@stellar/stellar-sdk";
-import { EscrowAction, EscrowClient, EscrowMilestone, availableActions } from "@stellar-trust/escrow";
+import { EscrowAction, EscrowClient, EscrowInfo, EscrowMilestone, actionsForAccount, availableActions } from "@stellar-trust/escrow";
 import { AppShell, SectionHeading, StatusPill } from "@/components/app-shell";
 
 const CONTRACT_ID =
@@ -27,6 +27,7 @@ const actions: { action: EscrowAction; label: string; hint: string }[] = [
 export default function EscrowPage() {
   const [client] = useState(() => new EscrowClient({ contractId: CONTRACT_ID }));
   const [address, setAddress] = useState<string | null>(null);
+  const [info, setInfo] = useState<EscrowInfo | null>(null);
   const [milestones, setMilestones] = useState<EscrowMilestone[] | null>(null);
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
@@ -57,6 +58,7 @@ export default function EscrowPage() {
       const res = await requestAccess();
       if (res.error) throw new Error(res.error.message ?? "Freighter connection was rejected.");
       setAddress(res.address);
+      setInfo(await client.getInfo(res.address));
       await loadMilestones(res.address);
     });
 
@@ -100,7 +102,7 @@ export default function EscrowPage() {
                         key={a.action}
                         type="button"
                         title={a.hint}
-                        disabled={busy || !availableActions(m, Date.now() / 1000).includes(a.action)}
+                        disabled={busy || !actionsForAccount(availableActions(m, Date.now() / 1000), address, info).includes(a.action)}
                         onClick={() => act(a.action, i)}
                         className="rounded-lg border border-slate-300 px-3 py-1.5 text-sm disabled:opacity-40"
                       >
