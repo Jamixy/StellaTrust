@@ -16,7 +16,10 @@ jobs:
           key: stellar-cli-${{ runner.os }}-v1
       - name: Install stellar-cli
         if: steps.cli-cache.outputs.cache-hit != 'true'
-        run: cargo install --locked stellar-cli
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libdbus-1-dev pkg-config libudev-dev
+          cargo install --locked stellar-cli
       - name: Build and deploy
         run: ./scripts/deploy-escrow.sh ci-deployer | tee deploy.log
       - name: Summary
