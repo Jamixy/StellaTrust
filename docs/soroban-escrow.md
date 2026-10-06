@@ -10,6 +10,8 @@ application-controlled flow described in `escrow-flow.md`.
 | `release(i)` | client | Pays milestone `i` to the freelancer |
 | `claim(i)` | freelancer | Pays a *submitted* milestone after its deadline if the client never released |
 | `refund(i)` | client | Returns an *undelivered* milestone after its deadline |
+| `info()` | anyone | Returns the client, freelancer and token fixed at `init` |
+| `milestones()` | anyone | Returns every milestone with its status |
 
 Delivered work can never be refunded, and no milestone can be paid twice.
 
@@ -82,3 +84,11 @@ The full flow has been exercised against the deployed contract: `init` (locks
 
 `claim` is only available after a milestone's deadline, so it is covered by the
 unit tests rather than the live deployment.
+
+## Roles in the UI
+
+`EscrowClient.getInfo()` reads `info()` so the escrow page can offer the client
+only `release` / `refund` and the freelancer only `submit` / `claim`. Contracts
+deployed before `info()` existed (including the first testnet deployment) have
+no such function; the page then falls back to status and deadline gating only.
+Redeploy to get role gating.

@@ -51,6 +51,14 @@ enum DataKey {
     Milestones,
 }
 
+#[contracttype]
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct Info {
+    pub client: Address,
+    pub freelancer: Address,
+    pub token: Address,
+}
+
 #[contract]
 pub struct Escrow;
 
@@ -173,6 +181,15 @@ impl Escrow {
             &amount,
         );
         Ok(())
+    }
+
+    /// The parties and token fixed at `init`.
+    pub fn info(env: Env) -> Result<Info, Error> {
+        Ok(Info {
+            client: load(&env, &DataKey::Client)?,
+            freelancer: load(&env, &DataKey::Freelancer)?,
+            token: load(&env, &DataKey::Token)?,
+        })
     }
 
     pub fn milestones(env: Env) -> Result<Vec<Milestone>, Error> {
