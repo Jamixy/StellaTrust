@@ -4,7 +4,7 @@ StellarTrust is a milestone-based escrow MVP for freelancers and clients built o
 
 This project is currently a Stellar Testnet MVP and does not process real-world funds.
 
-**Live Soroban escrow contract (Testnet):** [`CBCI6QFRQHUVZDMLF5NLY4U56PEXHZ7KYCEWTXXJ6XZMGHCY5PG4WZM4`](https://stellar.expert/explorer/testnet/contract/CBCI6QFRQHUVZDMLF5NLY4U56PEXHZ7KYCEWTXXJ6XZMGHCY5PG4WZM4) - see [docs/soroban-escrow.md](docs/soroban-escrow.md).
+**Live Soroban escrow contract (Testnet):** [`CB3HIJKAE23437S4MGSYAIYXQDLN73J56KNME5WNCY2KRKYCMTMZJHIV`](https://stellar.expert/explorer/testnet/contract/CB3HIJKAE23437S4MGSYAIYXQDLN73J56KNME5WNCY2KRKYCMTMZJHIV) - see [docs/soroban-escrow.md](docs/soroban-escrow.md).
 
 ## Overview
 
@@ -158,7 +158,7 @@ stellar-trust/
 
 ### Live on-chain escrow
 
-Milestones read from the deployed Soroban contract on Testnet, with Freighter signing. Milestone 1 has been released; milestone 2 is submitted.
+Milestones read from a Soroban escrow contract on Testnet, with Freighter signing (screenshot taken against the first deployment). Milestone 1 has been released; milestone 2 is submitted.
 
 ![Live escrow page](docs/screenshots/escrow-live.png)
 

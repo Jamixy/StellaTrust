@@ -41,8 +41,8 @@ link. Add that link to the README once deployed.
 | | |
 | --- | --- |
 | Network | Stellar Testnet |
-| Contract ID | `CBCI6QFRQHUVZDMLF5NLY4U56PEXHZ7KYCEWTXXJ6XZMGHCY5PG4WZM4` |
-| Explorer | https://stellar.expert/explorer/testnet/contract/CBCI6QFRQHUVZDMLF5NLY4U56PEXHZ7KYCEWTXXJ6XZMGHCY5PG4WZM4 |
+| Contract ID | `CB3HIJKAE23437S4MGSYAIYXQDLN73J56KNME5WNCY2KRKYCMTMZJHIV` |
+| Explorer | https://stellar.expert/explorer/testnet/contract/CB3HIJKAE23437S4MGSYAIYXQDLN73J56KNME5WNCY2KRKYCMTMZJHIV |
 
 Deployed with the `Deploy escrow to testnet` GitHub Actions workflow.
 
@@ -77,13 +77,16 @@ The `token` must be the token contract, never the escrow contract's own ID
 
 ## Verified on testnet
 
-The full flow has been exercised against the deployed contract: `init` (locks
-5 XLM), `submit` (freelancer marks milestone 1 delivered) and `release`
-(client pays milestone 1). The call history is public on the
-[contract's explorer page](https://stellar.expert/explorer/testnet/contract/CBCI6QFRQHUVZDMLF5NLY4U56PEXHZ7KYCEWTXXJ6XZMGHCY5PG4WZM4).
+The full flow was exercised against the first testnet deployment
+(`CBCI6QFRQHUVZDMLF5NLY4U56PEXHZ7KYCEWTXXJ6XZMGHCY5PG4WZM4`): `init` (locks 5 XLM), `submit` (freelancer marks milestone 1
+delivered) and `release` (client pays milestone 1). Its call history is public
+on its [explorer page](https://stellar.expert/explorer/testnet/contract/CBCI6QFRQHUVZDMLF5NLY4U56PEXHZ7KYCEWTXXJ6XZMGHCY5PG4WZM4).
+
+The current deployment (`CB3HIJKAE23437S4MGSYAIYXQDLN73J56KNME5WNCY2KRKYCMTMZJHIV`) adds `info()` and events. The same flow has
+not yet been re-run against it.
 
 `claim` is only available after a milestone's deadline, so it is covered by the
-unit tests rather than the live deployment.
+unit tests rather than a live run.
 
 ## Roles in the UI
 
