@@ -65,8 +65,20 @@ immediately after deploying:
 stellar contract invoke --id <CONTRACT_ID> --source <client-identity> --network testnet \
   -- init --client <CLIENT_G...> --freelancer <FREELANCER_G...> \
   --token CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC \
-  --amounts '["3000000000","2000000000"]' --deadlines '[1893456000,1896134400]'
+  --amounts '["30000000","20000000"]' --deadlines '[1893456000,1896134400]'
 ```
 
 The token above is the native XLM Stellar Asset Contract on Testnet; amounts
-are in stroops (1 XLM = 10,000,000).
+are in stroops (1 XLM = 10,000,000), so the example above is 3 XLM and 2 XLM.
+The `token` must be the token contract, never the escrow contract's own ID
+(that fails with `Contract re-entry is not allowed`).
+
+## Verified on testnet
+
+The full flow has been exercised against the deployed contract: `init` (locks
+5 XLM), `submit` (freelancer marks milestone 1 delivered) and `release`
+(client pays milestone 1). The call history is public on the
+[contract's explorer page](https://stellar.expert/explorer/testnet/contract/CBCI6QFRQHUVZDMLF5NLY4U56PEXHZ7KYCEWTXXJ6XZMGHCY5PG4WZM4).
+
+`claim` is only available after a milestone's deadline, so it is covered by the
+unit tests rather than the live deployment.
