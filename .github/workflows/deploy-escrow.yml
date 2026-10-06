@@ -1,0 +1,27 @@
+name: Deploy escrow to testnet
+on:
+  workflow_dispatch:
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: wasm32v1-none
+      - uses: actions/cache@v4
+        id: cli-cache
+        with:
+          path: ~/.cargo/bin/stellar
+          key: stellar-cli-${{ runner.os }}-v1
+      - name: Install stellar-cli
+        if: steps.cli-cache.outputs.cache-hit != 'true'
+        run: cargo install --locked stellar-cli
+      - name: Build and deploy
+        run: ./scripts/deploy-escrow.sh ci-deployer | tee deploy.log
+      - name: Summary
+        run: |
+          {
+            echo "## Escrow deployed to Stellar Testnet"
+            grep -E "Deployed|Explorer" deploy.log
+          } >> "$GITHUB_STEP_SUMMARY"

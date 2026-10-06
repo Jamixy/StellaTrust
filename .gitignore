@@ -9,3 +9,5 @@ coverage
 .DS_Store
 prisma/dev.db
 prisma/dev.db-journal
+contracts/*/target
+contracts/*/test_snapshots
