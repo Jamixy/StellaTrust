@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { Address, Keypair, nativeToScVal, xdr } from "@stellar/stellar-sdk";
 import { EscrowClient, actionsForAccount, availableActions, decodeInfo, decodeMilestones, isValidContractId } from "./escrow";
 
-const CONTRACT_ID = "CBCI6QFRQHUVZDMLF5NLY4U56PEXHZ7KYCEWTXXJ6XZMGHCY5PG4WZM4";
+const CONTRACT_ID = "CB3HIJKAE23437S4MGSYAIYXQDLN73J56KNME5WNCY2KRKYCMTMZJHIV";
 
 describe("EscrowClient", () => {
   it("accepts the deployed testnet contract id and rejects junk", () => {

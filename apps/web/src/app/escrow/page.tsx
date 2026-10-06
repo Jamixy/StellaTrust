@@ -7,7 +7,7 @@ import { EscrowAction, EscrowClient, EscrowInfo, EscrowMilestone, actionsForAcco
 import { AppShell, SectionHeading, StatusPill } from "@/components/app-shell";
 
 const CONTRACT_ID =
-  process.env.NEXT_PUBLIC_ESCROW_CONTRACT_ID ?? "CBCI6QFRQHUVZDMLF5NLY4U56PEXHZ7KYCEWTXXJ6XZMGHCY5PG4WZM4";
+  process.env.NEXT_PUBLIC_ESCROW_CONTRACT_ID ?? "CB3HIJKAE23437S4MGSYAIYXQDLN73J56KNME5WNCY2KRKYCMTMZJHIV";
 const EXPLORER = "https://stellar.expert/explorer/testnet";
 const STROOPS = 10_000_000n;
 
