@@ -20,3 +20,16 @@ cargo test
 
 Not yet audited or deployed; testnet deployment and web integration are
 tracked in `ROADMAP.md`.
+
+## Deploying to testnet
+
+With [stellar-cli](https://developers.stellar.org/docs/tools/cli) >= 25.2.0
+installed:
+
+```bash
+./scripts/deploy-escrow.sh
+```
+
+The script creates and funds a testnet identity, builds the WASM with
+`stellar contract build`, deploys it, and prints the contract ID and explorer
+link. Add that link to the README once deployed.
