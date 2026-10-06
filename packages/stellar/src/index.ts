@@ -105,3 +105,4 @@ export function createStellarPaymentService(env: NodeJS.ProcessEnv = process.env
 }
 
 export { Asset, Networks, StrKey } from "@stellar/stellar-sdk";
+export * from "./escrow";

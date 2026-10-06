@@ -4,6 +4,8 @@ StellarTrust is a milestone-based escrow MVP for freelancers and clients built o
 
 This project is currently a Stellar Testnet MVP and does not process real-world funds.
 
+**Live Soroban escrow contract (Testnet):** [`CBCI6QFRQHUVZDMLF5NLY4U56PEXHZ7KYCEWTXXJ6XZMGHCY5PG4WZM4`](https://stellar.expert/explorer/testnet/contract/CBCI6QFRQHUVZDMLF5NLY4U56PEXHZ7KYCEWTXXJ6XZMGHCY5PG4WZM4) - see [docs/soroban-escrow.md](docs/soroban-escrow.md).
+
 ## Overview
 
 StellarTrust helps clients and freelancers coordinate trust around milestone-based work. Instead of a full decentralized arbitration stack, the MVP focuses on the essential flow:

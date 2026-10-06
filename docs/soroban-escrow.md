@@ -33,3 +33,20 @@ installed:
 The script creates and funds a testnet identity, builds the WASM with
 `stellar contract build`, deploys it, and prints the contract ID and explorer
 link. Add that link to the README once deployed.
+
+## Testnet deployment
+
+| | |
+| --- | --- |
+| Network | Stellar Testnet |
+| Contract ID | `CBCI6QFRQHUVZDMLF5NLY4U56PEXHZ7KYCEWTXXJ6XZMGHCY5PG4WZM4` |
+| Explorer | https://stellar.expert/explorer/testnet/contract/CBCI6QFRQHUVZDMLF5NLY4U56PEXHZ7KYCEWTXXJ6XZMGHCY5PG4WZM4 |
+
+Deployed with the `Deploy escrow to testnet` GitHub Actions workflow.
+
+## TypeScript client
+
+`packages/stellar/src/escrow.ts` exports `EscrowClient`. It reads milestones
+by simulation and prepares `submit` / `release` / `claim` / `refund`
+transactions as unsigned XDR for a wallet to sign; it never handles secret
+keys. Wiring it to the web escrow page (wallet signing) is the next step.
