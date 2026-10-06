@@ -17,7 +17,7 @@ These items are future contributor tasks and are intentionally not part of the c
 2. Prisma-backed project persistence
 3. Prisma-backed milestone persistence
 4. Role-based authorization
-5. Soroban escrow contract
+5. Soroban escrow contract (contract + tests in `contracts/escrow`; testnet deploy and web integration pending)
 6. Automated milestone payment release
 7. Dispute resolution workflow
 8. Notifications and activity events
