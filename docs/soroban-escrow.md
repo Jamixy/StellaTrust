@@ -92,3 +92,24 @@ only `release` / `refund` and the freelancer only `submit` / `claim`. Contracts
 deployed before `info()` existed (including the first testnet deployment) have
 no such function; the page then falls back to status and deadline gating only.
 Redeploy to get role gating.
+
+## Events
+
+Every successful state change publishes exactly one event from the escrow
+contract; failed calls publish none. Topics are the snake_case event name
+followed by the `#[topic]` fields; remaining fields are in the event data map.
+
+| Event (topic 0) | Additional topics | Data |
+| --- | --- | --- |
+| `initialized` | `client`, `freelancer` | `token`, `total` |
+| `submitted` | `index` | none |
+| `released` | `index` | `amount` |
+| `claimed` | `index` | `amount` |
+| `refunded` | `index` | `amount` |
+
+`index` is the zero-based milestone index and `amount` is in token base units
+(stroops for XLM). Note that the token contract also emits its own `transfer`
+events in the same transaction.
+
+Contracts deployed before events were added (including the first testnet
+deployment) do not emit these; redeploy to get them.

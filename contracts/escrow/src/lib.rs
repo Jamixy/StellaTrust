@@ -8,7 +8,7 @@
 //! without the freelancer having delivered (marked as submitted).
 
 use soroban_sdk::{
-    contract, contracterror, contractimpl, contracttype, token, Address, Env, Vec,
+    contract, contracterror, contractevent, contractimpl, contracttype, token, Address, Env, Vec,
 };
 
 #[contracterror]
@@ -57,6 +57,53 @@ pub struct Info {
     pub client: Address,
     pub freelancer: Address,
     pub token: Address,
+}
+
+/// Emitted once by `init`.
+#[contractevent]
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct Initialized {
+    #[topic]
+    pub client: Address,
+    #[topic]
+    pub freelancer: Address,
+    pub token: Address,
+    pub total: i128,
+}
+
+/// Freelancer marked a milestone delivered.
+#[contractevent]
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct Submitted {
+    #[topic]
+    pub index: u32,
+}
+
+/// Client released a milestone to the freelancer.
+#[contractevent]
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct Released {
+    #[topic]
+    pub index: u32,
+    pub amount: i128,
+}
+
+/// Freelancer claimed a submitted milestone after its deadline.
+#[contractevent]
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct Claimed {
+    #[topic]
+    pub index: u32,
+    pub amount: i128,
+}
+
+/// Client reclaimed an undelivered milestone after its deadline.
+#[contractevent]
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct Refunded {
+    #[topic]
+    pub index: u32,
+    pub amount: i128,
 }
 
 #[contract]
@@ -122,6 +169,7 @@ impl Escrow {
         s.set(&DataKey::Freelancer, &freelancer);
         s.set(&DataKey::Token, &token);
         s.set(&DataKey::Milestones, &milestones);
+        Initialized { client, freelancer, token, total }.publish(&env);
         Ok(())
     }
 
@@ -137,6 +185,7 @@ impl Escrow {
         m.status = Status::Submitted;
         milestones.set(index, m);
         env.storage().instance().set(&DataKey::Milestones, &milestones);
+        Submitted { index }.publish(&env);
         Ok(())
     }
 
@@ -144,7 +193,9 @@ impl Escrow {
     pub fn release(env: Env, index: u32) -> Result<(), Error> {
         let client: Address = load(&env, &DataKey::Client)?;
         client.require_auth();
-        Self::pay_freelancer(&env, index, false)
+        let amount = Self::pay_freelancer(&env, index, false)?;
+        Released { index, amount }.publish(&env);
+        Ok(())
     }
 
     /// Freelancer claims a submitted milestone once its deadline has passed
@@ -152,7 +203,9 @@ impl Escrow {
     pub fn claim(env: Env, index: u32) -> Result<(), Error> {
         let freelancer: Address = load(&env, &DataKey::Freelancer)?;
         freelancer.require_auth();
-        Self::pay_freelancer(&env, index, true)
+        let amount = Self::pay_freelancer(&env, index, true)?;
+        Claimed { index, amount }.publish(&env);
+        Ok(())
     }
 
     /// Client reclaims a milestone the freelancer never delivered, after the
@@ -180,6 +233,7 @@ impl Escrow {
             &client,
             &amount,
         );
+        Refunded { index, amount }.publish(&env);
         Ok(())
     }
 
@@ -196,7 +250,7 @@ impl Escrow {
         load(&env, &DataKey::Milestones)
     }
 
-    fn pay_freelancer(env: &Env, index: u32, require_deadline: bool) -> Result<(), Error> {
+    fn pay_freelancer(env: &Env, index: u32, require_deadline: bool) -> Result<i128, Error> {
         let freelancer: Address = load(env, &DataKey::Freelancer)?;
         let token: Address = load(env, &DataKey::Token)?;
         let mut milestones: Vec<Milestone> = load(env, &DataKey::Milestones)?;
@@ -219,7 +273,7 @@ impl Escrow {
             &freelancer,
             &amount,
         );
-        Ok(())
+        Ok(amount)
     }
 }
 
