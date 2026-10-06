@@ -50,3 +50,23 @@ Deployed with the `Deploy escrow to testnet` GitHub Actions workflow.
 by simulation and prepares `submit` / `release` / `claim` / `refund`
 transactions as unsigned XDR for a wallet to sign; it never handles secret
 keys. Wiring it to the web escrow page (wallet signing) is the next step.
+
+## Using the escrow page
+
+`/escrow` connects to [Freighter](https://freighter.app) (set to Testnet),
+reads milestones from the contract, and signs `submit` / `release` / `claim` /
+`refund` with the connected wallet.
+
+The deployed contract must be initialized once before it shows milestones.
+The first caller of `init` fixes the client, freelancer and token, so run it
+immediately after deploying:
+
+```bash
+stellar contract invoke --id <CONTRACT_ID> --source <client-identity> --network testnet \
+  -- init --client <CLIENT_G...> --freelancer <FREELANCER_G...> \
+  --token CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC \
+  --amounts '["3000000000","2000000000"]' --deadlines '[1893456000,1896134400]'
+```
+
+The token above is the native XLM Stellar Asset Contract on Testnet; amounts
+are in stroops (1 XLM = 10,000,000).
